@@ -1,0 +1,8 @@
+The list of celebrities (celebrities.txt) was created using the website:
+https://www.cbsnews.com/pictures/the-biggest-twitter-accounts-on-earth/
+
+Note: Celebrites that do not primarily tweet in English were left out.
+
+Dependecy needed for createDB.py:
+
+sudo pip3 install tweepy
