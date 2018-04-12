@@ -1,5 +1,4 @@
-import tweepy, os, shutil
-import re
+import tweepy, os, shutil, re
 
 #Twitter API credentials
 consumer_key = "t4aP7vw4N8R1G9x691ihMZobR"
@@ -11,7 +10,6 @@ folderSizes = []
 
 def get_all_tweets(folderName, screen_name):
 	#Twitter only allows access to a users most recent 3240 tweets with this method
-
 	print("---------------------------------------------------------")
 	print("Populating: "+folderName+"...") 
 	
@@ -48,9 +46,11 @@ def get_all_tweets(folderName, screen_name):
 	count = 0
 	#write the files
 	for i in range(0, len(alltweets)):
-		if alltweets[i].full_text != '':
-			with open(folderName+'tweet_'+str(i)+'.txt', 'w') as outFile:
-				outFile.write(alltweets[i].full_text)
+		tweet = alltweets[i].full_text
+		tweet = re.sub(r"http\S+", "", tweet)
+		if (tweet != "") and (not tweet.isspace()):
+			with open(folderName+'tweet_'+str(count)+'.txt', 'w') as outFile:
+				outFile.write(tweet)
 			count += 1
 
 	print ('Wrote '+str(count)+' text files to '+folderName)
@@ -92,18 +92,6 @@ def main():
 		size = len(files)
 		print("Number of tweets being used for "+str(celebrity[1])+": "+str(size))
 	print("---------------------------------------------------------\n")
-
-	print("Removing links and unwanted data...")
-	for celebrity in celebrities:
-		celebrity = celebrity.split()
-		path = 'celebrities/'+str(celebrity[0])+'/'
-		files = os.listdir(path)
-		for file in files:
-			with open(path+str(file), 'r') as inFile:
-				tweet = inFile.read()
-				result = re.sub(r"http\S+", "", tweet)
-			with open(path+str(file), 'w') as outFile:
-				outFile.write(result)
 			
 	print("Database is all set!")
 
