@@ -7,7 +7,7 @@ import sys
 import os
 import math
 
-def main():
+def test(withhold):
     celeb_pos = []
     word_frequencies = []
     word_bigrams = []
@@ -27,14 +27,13 @@ def main():
     test_text = test_file.read()
     test_file.close()
     celeb = identifyCelebrity(test_text, celeb_pos, word_frequencies, word_bigrams)
-    print(celeb)
+    return(celeb)
 
 def trainBigramModel(tweet_directory):
     word_frequencies = {}
     word_bigram = {}
     total_chars = 0
 
-    print(tweet_directory)
     for tweet in os.listdir(tweet_directory):
         input_file = open(tweet_directory+tweet, 'r')
         input_string = input_file.read()
@@ -59,7 +58,6 @@ def trainBigramModel(tweet_directory):
             else:
                 word_bigram[bigram] = word_bigram[bigram] + 1
             idx+=1
-    print(total_chars)
 
     return(word_frequencies, word_bigram)
 
@@ -67,7 +65,6 @@ def identifyCelebrity(test_text, celeb_list, word_frequencies, word_bigrams):
     pos = 0
     test_text = test_text.replace("\n", " ")
     test_text = test_text.split(" ")
-    print(test_text)
     probabilities = []
 
     while pos < len(celeb_list):
@@ -94,9 +91,8 @@ def identifyCelebrity(test_text, celeb_list, word_frequencies, word_bigrams):
             idx+=1
         pos+=1
     
-    print(probabilities)
     return celeb_list[probabilities.index(max(probabilities))]
 
 if __name__ == "__main__":
     # pylint: disable=no-value-for-parameter
-    main()
+    test()
