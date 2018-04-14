@@ -11,7 +11,7 @@ def main():
     celeb_pos = []
     character_frequencies = []
     character_bigrams = []
-    test_dir = "TwitterCelebrity/celebrities/"
+    test_dir = "celebrities/"
     test_celebs = os.listdir(test_dir)
     for celeb in test_celebs:
         count = 0
@@ -23,7 +23,7 @@ def main():
         character_bigrams.append(temp[1])
         celeb_pos.append(celeb)
 
-    test_file = open("TwitterCelebrity/test_tweet.txt", 'r')
+    test_file = open("test_tweet.txt", 'r')
     test_text = test_file.read()
     test_file.close()
     celeb = identifyCelebrity(test_text, celeb_pos, character_frequencies, character_bigrams)
