@@ -49,8 +49,9 @@ def weighting(tweets, celebIndex, celeb):
 def main():
 	tweetDirectory = sys.argv[1]
 	path = os.getcwd() + '/' + tweetDirectory + '/'
-	
 
+	output = open('rocchio.out', 'w+')
+	
 	with open('invertedIndex.json', 'r') as handle:
 		celebIndex = json.load(handle)
 
@@ -69,8 +70,11 @@ def main():
 		inner_product = weighting(tokens, celebIndex, celeb)
 		similarities[celeb] = float(inner_product/(len(tokens) * docLengths[celeb]) * 10000)
 
+	num = 0
 	for key, value in sorted(similarities.iteritems(), key=lambda (k,v): (v,k), reverse=True):
-            print(str(key) + " " + str(value) + '\n')
+		if num < 3:
+			output.write(str(key) + '\n' + str(value) + '\n')
+			num += 1
 
 
 
