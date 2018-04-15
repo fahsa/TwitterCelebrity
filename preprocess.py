@@ -5,7 +5,7 @@ import sys
 import os
 import re
 import operator
-#import Porter_stemmer_code
+import Porter_stemmer_code
 
 stopwords = open('stopwords', 'r').read().split('\n')
 
@@ -121,13 +121,13 @@ def removeStopwords(inputList):
 
 	return outputList
 
-# def stemWords(inputList):
-# 	stemmedOutput = []
-# 	p = Porter_stemmer_code.PorterStemmer()
-# 	for token in inputList:
-# 		stemmedOutput.append(p.stem(token, 0, len(token) - 1))
+def stemWords(inputList):
+	stemmedOutput = []
+	p = Porter_stemmer_code.PorterStemmer()
+	for token in inputList:
+		stemmedOutput.append(p.stem(token, 0, len(token) - 1))
 
-# 	return stemmedOutput
+	return stemmedOutput
 
 def main():
 	wordCount = open('preprocess.output', 'w+')
