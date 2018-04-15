@@ -79,9 +79,10 @@ def run_rocchio_method(folder):
 
 	num = 0
 	#total += 1
-	for key, value in sorted(similarities.iteritems(), key=lambda (k,v): (v,k), reverse=True):
+	sortedVal = [(k, similarities[k]) for k in sorted(similarities, key=similarities.get, reverse=True)]
+	for key, val in sortedVal:
 		if num < 3:
-			output.write(str(key) + '\n' + str(value) + '\n')
+			output.write(str(key) + '\n' + str(val) + '\n')
 			#output.write(str(key) + '\n')
 			# if file.startswith(key):
 			# 	numCorrect += 1
