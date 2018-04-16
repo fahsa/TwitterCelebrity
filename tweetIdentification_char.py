@@ -98,8 +98,9 @@ def identifyCelebrity(test_text, celeb_list, character_frequencies, character_bi
     
     idx = 0
     output_file = open("char_output", "w")
-    while idx < 3:  
-        output_file.write(celeb_list[probabilities.index(max(probabilities))]+"\n1\n")
+    while idx < 3:
+        name = celeb_list[probabilities.index(max(probabilities))].replace("_", " ")  
+        output_file.write(name+"\n1\n")
         del celeb_list[probabilities.index(max(probabilities))]
         del probabilities[probabilities.index(max(probabilities))]
         idx+=1

@@ -83,7 +83,7 @@ def run_nn_method(directory):
                 max_idx = np.argmax(result)
                 celeb_index[max_idx] += 1
             for key, val in celeb_index.most_common(3):
-                f.write(celebrities[key] + '\n' + str(val/total_test_data) + '\n')
+                f.write(celebrities[key].replace("_", " ") + '\n' + str(val/total_test_data) + '\n')
         f.close()
 
 def main():
