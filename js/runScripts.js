@@ -19,7 +19,7 @@ function run() {
   //window.resizeTo(1000, 1000);
   $(".data").hide();
   $("#wait").show();
-  setTimeout(makeAllCharts, 15000);
+  setTimeout(makeAllCharts, 17000);
 }
 
 function back() {
@@ -47,8 +47,7 @@ function makeAllCharts() {
 
   $(document.html).scrollTop = $(document.html).scrollHeight;
 
-  //var files = ["./nn.out", "./rocchio.out", "./bigram_char.out", "./bigram_word.out"]
-  var files = ["./rocchio.out", "./rocchio.out", "./char_output", "./word_output"]
+  var files = ["./nn_output", "./rocchio.out", "./char_output", "./word_output"]
   var names = ["Neural Network", "Rocchio", "Bigram (Character)", "Bigram (Word)"]
 
   for (var i = 0; i < 4; i++) {

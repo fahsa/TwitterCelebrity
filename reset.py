@@ -13,5 +13,8 @@ def main():
 	if os.path.exists('word_output'):
 		os.remove('word_output')
 
+	if os.path.exists('nn_output'):
+		os.remove('nn_output')
+
 if __name__ == '__main__':
 	main()
