@@ -82,7 +82,8 @@ def run_rocchio_method(folder):
 	sortedVal = [(k, similarities[k]) for k in sorted(similarities, key=similarities.get, reverse=True)]
 	for key, val in sortedVal:
 		if num < 3:
-			output.write(str(key) + '\n' + str(val) + '\n')
+			name = str(key).replace('_', ' ')
+			output.write(name + '\n' + str(val) + '\n')
 			#output.write(str(key) + '\n')
 			# if file.startswith(key):
 			# 	numCorrect += 1
