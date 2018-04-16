@@ -7,37 +7,45 @@ import sys
 import os
 import math
 
-def test(withhold):
+def run_bigram_word_method():
     celeb_pos = []
     word_frequencies = []
     word_bigrams = []
-    test_dir = "celebrities/"
-    test_celebs = os.listdir(test_dir)
+    lengths = []
+    train_dir = "celebrities/"
+    test_celebs = os.listdir(train_dir)
     for celeb in test_celebs:
         count = 0
         if celeb == ".DS_Store":
             continue
-        cur_dir = test_dir+celeb+"/"
+        cur_dir = train_dir+celeb+"/"
         temp = trainBigramModel(cur_dir)
         word_frequencies.append(temp[0])
         word_bigrams.append(temp[1])
+        lengths.append(temp[2])
         celeb_pos.append(celeb)
 
-    test_file = open("test_tweet.txt", 'r')
-    test_text = test_file.read()
-    test_file.close()
-    celeb = identifyCelebrity(test_text, celeb_pos, word_frequencies, word_bigrams)
-    return(celeb)
+    test_dir = "testUser/"
+    test_text = ""
+    for tweet in os.listdir(test_dir):
+        test_file = open(test_dir+tweet, 'r')
+        tweet_text = test_file.read()
+        test_file.close()
+        test_text = test_text + " " + tweet_text
+    celebs = identifyCelebrity(test_text, celeb_pos, word_frequencies, word_bigrams, lengths)
+    #print(celeb)
 
 def trainBigramModel(tweet_directory):
     word_frequencies = {}
     word_bigram = {}
     total_chars = 0
+    length = 0
 
     for tweet in os.listdir(tweet_directory):
         input_file = open(tweet_directory+tweet, 'r')
         input_string = input_file.read()
         input_file.close()
+        length = length + len(input_string)
         input_string = input_string.replace("\n", " ")
         input_string = input_string.split(" ")
 
@@ -59,9 +67,9 @@ def trainBigramModel(tweet_directory):
                 word_bigram[bigram] = word_bigram[bigram] + 1
             idx+=1
 
-    return(word_frequencies, word_bigram)
+    return(word_frequencies, word_bigram, length)
 
-def identifyCelebrity(test_text, celeb_list, word_frequencies, word_bigrams):
+def identifyCelebrity(test_text, celeb_list, word_frequencies, word_bigrams, lengths):
     pos = 0
     test_text = test_text.replace("\n", " ")
     test_text = test_text.split(" ")
@@ -91,8 +99,16 @@ def identifyCelebrity(test_text, celeb_list, word_frequencies, word_bigrams):
             idx+=1
         pos+=1
     
+    idx = 0
+    output_file = open("word_output", "w")
+    while idx < 3: 
+        output_file.write(celeb_list[probabilities.index(max(probabilities))]+"\n1\n")
+        del celeb_list[probabilities.index(max(probabilities))]
+        del probabilities[probabilities.index(max(probabilities))]
+        idx+=1
+    output_file.close()
     return celeb_list[probabilities.index(max(probabilities))]
 
 if __name__ == "__main__":
     # pylint: disable=no-value-for-parameter
-    test()
+    run_bigram_word_method()

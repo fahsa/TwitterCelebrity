@@ -46,8 +46,8 @@ def weighting(tweets, celebIndex, celeb):
     return dot_product
 
 
-def main():
-	tweetDirectory = sys.argv[1]
+def run_rocchio_method(folder):
+	tweetDirectory = folder
 	path = os.getcwd() + '/' + tweetDirectory + '/'
 
 	output = open('rocchio.out', 'w+')
@@ -60,21 +60,36 @@ def main():
 
 
 	tweet = ''
+	numCorrect = 0
+	total = 0
 	for file in os.listdir(path):
 		addition = ' ' + open(path + file, 'r').read()
 		tweet += addition
+		#tweet = open(path + file, 'r').read()
 
 	tokens = preprocessTweet(tweet)
+
+	if len(tokens) == 0:
+		return
+
 	similarities = {}
 	for celeb in celebs:
 		inner_product = weighting(tokens, celebIndex, celeb)
 		similarities[celeb] = float(inner_product/(len(tokens) * docLengths[celeb]) * 10000)
 
 	num = 0
-	for key, value in sorted(similarities.iteritems(), key=lambda (k,v): (v,k), reverse=True):
+	#total += 1
+	sortedVal = [(k, similarities[k]) for k in sorted(similarities, key=similarities.get, reverse=True)]
+	for key, val in sortedVal:
 		if num < 3:
-			output.write(str(key) + '\n' + str(value) + '\n')
+			name = str(key).replace('_', ' ')
+			output.write(name + '\n' + str(val) + '\n')
+			#output.write(str(key) + '\n')
+			# if file.startswith(key):
+			# 	numCorrect += 1
 			num += 1
+
+	#output.write("Accuracy = " + str(numCorrect/total))
 
 
 
@@ -84,4 +99,4 @@ def main():
 
 
 if __name__ == '__main__':
-	main()
+	run_rocchio_method(sys.argv[1])

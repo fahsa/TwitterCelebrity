@@ -7,34 +7,37 @@ import sys
 import os
 import math
 
-def main():
+def run_bigram_char_method():
     celeb_pos = []
     character_frequencies = []
     character_bigrams = []
-    test_dir = "celebrities/"
-    test_celebs = os.listdir(test_dir)
+    train_dir = "celebrities/"
+    test_celebs = os.listdir(train_dir)
     for celeb in test_celebs:
         count = 0
         if celeb == ".DS_Store":
             continue
-        cur_dir = test_dir+celeb+"/"
+        cur_dir = train_dir+celeb+"/"
         temp = trainBigramModel(cur_dir)
         character_frequencies.append(temp[0])
         character_bigrams.append(temp[1])
         celeb_pos.append(celeb)
 
-    test_file = open("test_tweet.txt", 'r')
-    test_text = test_file.read()
-    test_file.close()
+    test_dir = "testUser/"
+    test_text = ""
+    for tweet in os.listdir(test_dir):
+        test_file = open(test_dir+tweet, 'r')
+        tweet_text = test_file.read()
+        test_file.close()
+        test_text = test_text + " " + tweet_text
     celeb = identifyCelebrity(test_text, celeb_pos, character_frequencies, character_bigrams)
-    print(celeb)
+    # print(celeb)
 
 def trainBigramModel(tweet_directory):
     character_frequencies = {}
     character_bigram = {}
     total_chars = 0
 
-    print(tweet_directory)
     for tweet in os.listdir(tweet_directory):
         input_file = open(tweet_directory+tweet, 'r')
         input_string = input_file.read()
@@ -60,7 +63,6 @@ def trainBigramModel(tweet_directory):
             else:
                 character_bigram[bigram] = character_bigram[bigram] + 1
             idx+=1
-    print(total_chars)
 
     return(character_frequencies, character_bigram)
 
@@ -94,9 +96,16 @@ def identifyCelebrity(test_text, celeb_list, character_frequencies, character_bi
             idx+=1
         pos+=1
     
-    print(probabilities)
+    idx = 0
+    output_file = open("char_output", "w")
+    while idx < 3:  
+        output_file.write(celeb_list[probabilities.index(max(probabilities))]+"\n1\n")
+        del celeb_list[probabilities.index(max(probabilities))]
+        del probabilities[probabilities.index(max(probabilities))]
+        idx+=1
+    output_file.close()
     return celeb_list[probabilities.index(max(probabilities))]
 
 if __name__ == "__main__":
     # pylint: disable=no-value-for-parameter
-    main()
+    run_bigram_char_method()

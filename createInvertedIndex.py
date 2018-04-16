@@ -7,7 +7,7 @@ import json
 def indexDocument(tweet, celeb, invertedIndex, docLengths):
 	tokens = pro.tokenizeText(tweet)
 	noStops = pro.removeStopwords(tokens)
-	# stems = pro.stemWords(noStops)
+	#stems = pro.stemWords(tokens)
 
 	if celeb not in docLengths:
 		docLengths[celeb] = 0
@@ -34,7 +34,7 @@ def main():
 	docLengths = {}
 
 	for dir in os.listdir(path):
-		if dir != '.DS_Store':
+		if dir != '.DS_Store' and dir != 'test':
 			directory = path + dir + '/'
 			for file in os.listdir(directory):
 				tweet = open(directory + file, 'r').read()
