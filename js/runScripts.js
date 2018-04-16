@@ -19,7 +19,7 @@ function run() {
   //window.resizeTo(1000, 1000);
   $(".data").hide();
   $("#wait").show();
-  setTimeout(makeAllCharts, 17000);
+  setTimeout(makeAllCharts, 20000);
 }
 
 function back() {

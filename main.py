@@ -10,11 +10,11 @@ def read_in():
     lines = sys.stdin.readlines()
     return json.loads(lines[0])
 
-def main(username):
-    '''lines = read_in()
+def main():
+    lines = read_in()
     username = ''
     for item in lines:
-        username += item'''
+        username += item
 
     # Gather 20 most recent tweets from given username
     # Make the testUser/ folder
@@ -47,4 +47,4 @@ def main(username):
     print("Done with Bigram (Word)!")
 
 if __name__ == '__main__':
-    main('lopez_wd')
+    main()
