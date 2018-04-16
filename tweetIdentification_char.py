@@ -23,14 +23,37 @@ def run_bigram_char_method():
         character_bigrams.append(temp[1])
         celeb_pos.append(celeb)
 
-    test_dir = "testUser/"
-    test_text = ""
+    test_dir = "Test/"
+    total = 0
+    results = []
+    idx = 0
+    while idx < len(celeb_pos):
+        results.append(0)
+        idx+=1
+
     for tweet in os.listdir(test_dir):
+        if tweet == ".DS_Store":
+            continue
         test_file = open(test_dir+tweet, 'r')
         tweet_text = test_file.read()
         test_file.close()
-        test_text = test_text + " " + tweet_text
-    celeb = identifyCelebrity(test_text, celeb_pos, character_frequencies, character_bigrams)
+        celeb = identifyCelebrity(tweet_text, celeb_pos, character_frequencies, character_bigrams)
+        total+=1
+        results[celeb_pos.index(celeb)]+=1
+
+    output_file = open("char_output", "w")
+    idx = 0
+    while idx < 3:
+        percent = float(max(results)) / float(total)
+        if percent != 0:
+            output_file.write(celeb_pos[results.index(max(results))] + "\n")
+        else:
+            output_file.write("None\n")
+        output_file.write(str(percent) + "\n")
+        del celeb_pos[results.index(max(results))]
+        del results[results.index(max(results))]
+        idx+=1
+    output_file.close()
     # print(celeb)
 
 def trainBigramModel(tweet_directory):
@@ -96,16 +119,8 @@ def identifyCelebrity(test_text, celeb_list, character_frequencies, character_bi
             idx+=1
         pos+=1
     
-    idx = 0
-    output_file = open("char_output", "w")
-    while idx < 3:
-        name = celeb_list[probabilities.index(max(probabilities))].replace("_", " ")  
-        output_file.write(name+"\n1\n")
-        del celeb_list[probabilities.index(max(probabilities))]
-        del probabilities[probabilities.index(max(probabilities))]
-        idx+=1
-    output_file.close()
-    return celeb_list[probabilities.index(max(probabilities))]
+    celeb = celeb_list[probabilities.index(max(probabilities))]
+    return celeb
 
 if __name__ == "__main__":
     # pylint: disable=no-value-for-parameter
