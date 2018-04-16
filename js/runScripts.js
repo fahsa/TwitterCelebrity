@@ -37,6 +37,7 @@ function back() {
   $("#back").hide();
   $("#nme").val("");
   $(document.body).css("margin", "8% auto 0 auto")
+  $("#celebTweet").html("CeleberTweet");
 }
 
 function makeAllCharts() {
@@ -46,6 +47,10 @@ function makeAllCharts() {
   $(document.body).css("margin", "1% auto 0 auto")
 
   $(document.html).scrollTop = $(document.html).scrollHeight;
+
+  var username = $("#nme").val();
+
+  $("#celebTweet").html("CeleberTweet (@"+username+")");
 
   var files = ["./nn_output", "./rocchio.out", "./char_output", "./word_output"]
   var names = ["Neural Network", "Rocchio", "Bigram (Character)", "Bigram (Word)"]
