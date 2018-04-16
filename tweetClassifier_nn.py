@@ -8,6 +8,7 @@ import json
 import os
 from collections import Counter
 from sklearn.model_selection import train_test_split
+from features import feature_engineering
 
 # Celebrities
 celebrities  = {'Ariana_Grande':0, 'Barack_Obama':1, 'Bill_Gates':2, 'Britney_Spears':3, 'Bruno_Mars':4, 'Demi_Lovato':5, 'Donald_Trump':6, 'Ellen_DeGeneres':7, 'Jimmy_Fallon':8, 'Justin_Bieber':9, 'Justin_Timberlake':10, 'Katy_Perry':11, 'Kevin_Hart':12, 'Kim_Kardashian':13, 'Lady_Gaga':14, 'LeBron_James':15, 'Miley_Cyrus':16, 'Oprah_Winfrey':17, 'Rihanna':18, 'Selena_Gomez':19}
@@ -18,8 +19,7 @@ def load_data():
 
     df = pd.DataFrame({col:dict(vals) for col, vals in temp.items()})
     # Tokenize
-    remove_punct = str.maketrans('','',string.punctuation)
-    df['words'] = df['text'].apply(lambda text: nltk.word_tokenize(text.translate(remove_punct)))
+    df = feature_engineering(df)
     train_set, test_set = train_test_split(df, test_size=0.2)
 
     return train_set, test_set
@@ -61,17 +61,21 @@ def multilayer_perceptron(input_tensor, weights, biases):
 def next_batch(train_set, i, batch_size, word_index):
     batch = []
     result = []
-    X = train_set['words'][i * batch_size: i * batch_size + batch_size]
+    X_words = train_set['words'][i * batch_size: i * batch_size + batch_size]
+    X_features = train_set['features'][i * batch_size: i * batch_size + batch_size]
     Y = train_set['celebrity'][i * batch_size: i * batch_size + batch_size]
 
-    # Word vectors
-    for word_vector in X:
-        layer = np.zeros(len(word_index), dtype=float)
+    # Word and feature vectors
+    for word_vector, feature_vector in zip(X_words, X_features):
+        # Length of vocabulary + 10 additional features
+        layer = np.zeros(len(word_index) + 10, dtype=float)
+        for index, feature in enumerate(feature_vector):
+            layer[index] = feature
         for word in word_vector:
             if word in word_index:
-                layer[word_index[word]] += 1
+                layer[10 + word_index[word]] += 1
             else:
-                layer[word_index['<UNK>']] += 1
+                layer[10 + word_index['<UNK>']] += 1
         batch.append(layer)
 
     # Label vectors
@@ -92,7 +96,7 @@ def run_nn(train_set, test_set, word_index):
     # Network Parameters
     n_hidden_1 = 100
     n_hidden_2 = 100
-    n_input = len(word_index)
+    n_input = len(word_index) + 10
     n_classes = len(celebrities)
 
     # Placeholders
@@ -101,14 +105,14 @@ def run_nn(train_set, test_set, word_index):
 
     # Weights and Bias
     weights = {
-        'h1': tf.Variable(tf.random_normal([n_input, n_hidden_1])),
-        'h2': tf.Variable(tf.random_normal([n_hidden_1, n_hidden_2])),
-        'out': tf.Variable(tf.random_normal([n_hidden_2, n_classes]))
+        'h1': tf.Variable(tf.random_normal([n_input, n_hidden_1]), name="wh1"),
+        'h2': tf.Variable(tf.random_normal([n_hidden_1, n_hidden_2]), name="wh2"),
+        'out': tf.Variable(tf.random_normal([n_hidden_2, n_classes]), name="wo")
     }
     biases = {
-        'b1': tf.Variable(tf.random_normal([n_hidden_1])),
-        'b2': tf.Variable(tf.random_normal([n_hidden_2])),
-        'out': tf.Variable(tf.random_normal([n_classes]))
+        'b1': tf.Variable(tf.random_normal([n_hidden_1]), name="bh1"),
+        'b2': tf.Variable(tf.random_normal([n_hidden_2]), name="bh2"),
+        'out': tf.Variable(tf.random_normal([n_classes]), name="bo")
     }
 
     # Initialize model
@@ -120,6 +124,9 @@ def run_nn(train_set, test_set, word_index):
 
     # Initializing variables
     init = tf.global_variables_initializer()
+
+    # Add ops to save and restore all the variables.
+    saver = tf.train.Saver()
 
     # Launch graph
     with tf.Session() as sess:
@@ -146,12 +153,17 @@ def run_nn(train_set, test_set, word_index):
         # Calculate accuracy
         accuracy = tf.reduce_mean(tf.cast(correct_pred, "float"))
         total_test_data = len(test_set)
-        batch_x_test,batch_y_test = next_batch(test_set, 0, total_test_data, word_index)
+        batch_x_test, batch_y_test = next_batch(test_set, 0, total_test_data, word_index)
         print("Accuracy:", accuracy.eval({input_tensor: batch_x_test, output_tensor: batch_y_test}))
+        # Save the variables to disk.
+        saver.save(sess, "./nn_model.ckpt")
 
 def main():
     train_set, test_set = load_data()
     word_index = gen_word_index(train_set)
+    with open('nn_word_index.json', 'w') as f:
+        json.dump(word_index, f)
+    f.close()
     run_nn(train_set, test_set, word_index)
 
 if __name__ == '__main__':
