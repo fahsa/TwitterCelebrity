@@ -10,7 +10,8 @@ sudo pip3 install tweepy
 
 ### To be able to use the neural network:
 TensorFlow - Python machine learning framework
-scikit-learn - Python machine learning library 
+
+scikit-learn - Python machine learning library
 ```
 sudo pip3 install tensorflow
 sudo pip3 install scipy // required for scikit-learn
