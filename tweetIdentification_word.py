@@ -25,7 +25,7 @@ def run_bigram_word_method():
         lengths.append(temp[2])
         celeb_pos.append(celeb)
 
-    test_dir = "Test/"
+    test_dir = "testUser/"
     total = 0
     results = []
     idx = 0
@@ -48,7 +48,8 @@ def run_bigram_word_method():
     while idx < 3:
         percent = float(max(results)) / float(total)
         if percent != 0:
-            output_file.write(celeb_pos[results.index(max(results))] + "\n")
+            name = celeb_pos[results.index(max(results))].replace("_", " ")
+            output_file.write(name + "\n")
         else:
             output_file.write("None\n")
         output_file.write(str(percent) + "\n")
@@ -61,7 +62,6 @@ def run_bigram_word_method():
 def trainBigramModel(tweet_directory):
     word_frequencies = {}
     word_bigram = {}
-    total_chars = 0
     length = 0
 
     for tweet in os.listdir(tweet_directory):
@@ -72,15 +72,14 @@ def trainBigramModel(tweet_directory):
         input_string = input_string.replace("\n", " ")
         input_string = input_string.split(" ")
 
-        # Character frequencies
+        # Word frequencies
         for c in input_string:
             if c not in word_frequencies:
                 word_frequencies[c] = 1
             else:
                 word_frequencies[c] = word_frequencies[c] + 1
-            total_chars+=1
 
-        # Character-bigram frequencies
+        # Word-bigram frequencies
         idx = 1
         while idx < len(input_string):
             bigram = input_string[idx-1] + input_string[idx]
@@ -114,8 +113,10 @@ def identifyCelebrity(test_text, celeb_list, word_frequencies, word_bigrams, len
 
             fraction = float(bigram_count) / float(char_count)
             logged_fraction = math.log10(fraction)
-            probabilities[pos] = probabilities[pos] + logged_fraction
-
+            if probabilities[pos] == 0:
+                probabilities[pos] = logged_fraction
+            else:
+                probabilities[pos] = probabilities[pos] + logged_fraction
             idx+=1
         pos+=1
     

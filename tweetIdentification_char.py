@@ -23,7 +23,7 @@ def run_bigram_char_method():
         character_bigrams.append(temp[1])
         celeb_pos.append(celeb)
 
-    test_dir = "Test/"
+    test_dir = "testUser/"
     total = 0
     results = []
     idx = 0
@@ -46,7 +46,8 @@ def run_bigram_char_method():
     while idx < 3:
         percent = float(max(results)) / float(total)
         if percent != 0:
-            output_file.write(celeb_pos[results.index(max(results))] + "\n")
+            name = celeb_pos[results.index(max(results))].replace("_", " ")
+            output_file.write(name + "\n")
         else:
             output_file.write("None\n")
         output_file.write(str(percent) + "\n")
